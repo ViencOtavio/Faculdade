@@ -1,0 +1,31 @@
+void mqtt(void) {
+//----------------------------------------------//
+// Inicialização e configuração
+esp_mqtt_client_handle_t mqttClienc
+esp_mqtt_client_config_t mqtt_cfg = {
+  .uri = "mqtt://url_broker:1883",
+  .cliente_id = "clientID",
+  .username = "usuario",
+  .password = "senha",
+}
+mqttClient = esp_mqtt_client_init(&mqtt_cfg);
+//---------------------------------------------//
+// Loop de funcionamento
+  while(1) {
+    while(!mqtt_client_conectado_ao_broker());
+    char *topico_subscribe = "/dado/receber";
+    mqtt_client_subscribe(topico_subscribe, QOS_0);
+
+    while(mqtt_client_conectado_ao_broker()) {
+      char *dado = mqtt_client_carrega_dado();
+      char *topico_publish = "/dado/enviar";
+      mqtt_client_publish(topico_publish, dado, QOS_0);
+      if (mqtt_client_recebeu_dados()) {
+        mqtt_client_trata_dados_recebidos();
+        mqtt_client_responde();
+
+      }
+    }
+  }
+//----------------------------------------//
+}
